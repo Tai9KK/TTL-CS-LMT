@@ -43,19 +43,26 @@
     fetch(csvUrl)
         .then(res => res.text())
         .then(data => {
-            const lines = data.split(/\r?\n/).filter(l => l.includes(','));
-            
-            // 讀取日期 (保持原本邏輯)
+            const lines = data.split(/\r?\n/).filter(l => l.trim() !== '');
             document.getElementById('update-time').innerText = lines[0].split(',')[0].trim();
 
             const container = document.getElementById('product-list');
             container.innerHTML = '';
 
             for (let i = 2; i < lines.length; i++) {
-                // 直接讀取，不去掉逗號
-                const [name, originalPrice, salePrice, date] = lines[i].split(',').map(item => item.trim());
+                // 核心修正：使用正則表達式來分割，忽略價格內部的逗號
+                // 意思：只在「逗號後面跟著空格」或「這是一個新欄位」時才切分
+                const row = lines[i];
+                // 這個正則表達式會比較精準地抓出四個欄位
+                const cols = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || row.split(',');
                 
-                if (name && salePrice) {
+                // 確保我們抓到了名稱(索引0)和惜福價(索引2)
+                if (cols.length >= 3) {
+                    const name = cols[0].replace(/"/g, '');
+                    const originalPrice = cols[1] ? cols[1].replace(/"/g, '') : "0";
+                    const salePrice = cols[2] ? cols[2].replace(/"/g, '') : "0";
+                    const date = cols[3] ? cols[3].replace(/"/g, '') : "無期限";
+                    
                     container.innerHTML += `
                         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex justify-between items-center">
                             <div>
