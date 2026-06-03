@@ -43,26 +43,19 @@
     fetch(csvUrl)
         .then(res => res.text())
         .then(data => {
-            // 1. 強制過濾：只保留包含逗號且名稱欄位不為空的行
             const lines = data.split(/\r?\n/).filter(l => l.includes(','));
             
-            // 2. 自動讀取日期 (抓取 A1 的值)
+            // 讀取日期
             document.getElementById('update-time').innerText = lines[0].split(',')[0].trim();
 
             const container = document.getElementById('product-list');
             container.innerHTML = '';
 
-            // 3. 從第 3 行開始 (索引 i=2)
+            // 處理商品 (直接抓取，因為現在都是純文字，不會有逗號搗亂)
             for (let i = 2; i < lines.length; i++) {
-                const row = lines[i].trim();
-                if (!row) continue; // 跳過空行
-
-                const cols = row.split(',').map(item => item.trim());
+                const [name, originalPrice, salePrice, date] = lines[i].split(',').map(item => item.trim());
                 
-                // 核心保護：名稱、原價、售價、期限 四個欄位都必須有內容才顯示
-                if (cols.length >= 4 && cols[0] !== "" && cols[2] !== "") {
-                    const [name, originalPrice, salePrice, date] = cols;
-                    
+                if (name && salePrice) { // 確保名稱與價格欄位都有值
                     container.innerHTML += `
                         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex justify-between items-center">
                             <div>
@@ -77,9 +70,6 @@
                     `;
                 }
             }
-        })
-        .catch(err => {
-            document.getElementById('product-list').innerHTML = '<p class="text-center text-red-500">資料格式讀取異常</p>';
         });
 </script>
 </body>
