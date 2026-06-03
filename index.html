@@ -45,17 +45,17 @@
         .then(data => {
             const lines = data.split(/\r?\n/).filter(l => l.includes(','));
             
-            // 讀取日期
+            // 讀取日期 (保持原本邏輯)
             document.getElementById('update-time').innerText = lines[0].split(',')[0].trim();
 
             const container = document.getElementById('product-list');
             container.innerHTML = '';
 
-            // 處理商品 (直接抓取，因為現在都是純文字，不會有逗號搗亂)
             for (let i = 2; i < lines.length; i++) {
+                // 直接讀取，不去掉逗號
                 const [name, originalPrice, salePrice, date] = lines[i].split(',').map(item => item.trim());
                 
-                if (name && salePrice) { // 確保名稱與價格欄位都有值
+                if (name && salePrice) {
                     container.innerHTML += `
                         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex justify-between items-center">
                             <div>
@@ -63,7 +63,7 @@
                                 <p class="text-xs text-gray-400 mt-1">⏳ 有效期限: ${date}</p>
                             </div>
                             <div class="text-right">
-                                <p class="text-xs text-gray-400 line-through">原價 $${originalPrice}</p>
+                                <p class="text-xs text-gray-400 line-through">原價 $${originalPrice}元</p>
                                 <p class="text-xl font-black text-red-600">$${salePrice}元</p>
                             </div>
                         </div>
