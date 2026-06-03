@@ -47,7 +47,7 @@
                 const lines = data.split(/\r?\n/).filter(l => l.trim() !== '');
                 
                 // 1. 自動讀取日期 (讀取 A1 格)
-                document.getElementById('update-time').innerText = lines[0].trim();
+                document.getElementById('update-time').innerText = lines[0].replace(/,/g, '').trim();
 
                 const container = document.getElementById('product-list');
                 container.innerHTML = '';
