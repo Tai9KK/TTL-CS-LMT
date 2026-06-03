@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【台酒便利店-花蓮店】即期惜福商品清單</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-4">
+
+    <div class="text-center mb-6 max-w-md mx-auto">
+        <h1 class="text-2xl font-bold text-gray-800">🛒【台酒便利店-花蓮店】<br>即期惜福商品清單</h1>
+        <p class="text-sm text-red-600 font-bold mt-3 bg-red-100 p-3 rounded-lg shadow-sm">
+            ⚠️ 數量有限，售完為止，實際以門市現場餘量為主
+        </p>
+    </div>
+
+    <div id="product-list" class="grid grid-cols-1 gap-3 max-w-md mx-auto">
+        <p class="text-center text-gray-400">載入商品中...</p>
+    </div>
+
+    <script>
+        // 您的 Google Sheets 發布連結
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQnV4EqBRopVryeZFVCCVelHDLrhthjiKbJ5EC88d0HjuZ5ub22wrbgPc6ELc0rrLUvkj3o5uqxNAC4/pub?gid=0&single=true&output=csv'; 
+
+        fetch(csvUrl)
+            .then(response => response.text())
+            .then(data => {
+                const container = document.getElementById('product-list');
+                container.innerHTML = ''; // 清空原本的「載入中...」文字
+
+                // 將 CSV 資料按換行分割並過濾掉空行
+                const lines = data.split('\n').filter(line => line.trim() !== '');
+                
+                // 跳過標題列 (從第 1 個索引開始)
+                for (let i = 1; i < lines.length; i++) {
+                    const columns = lines[i].split(',');
+                    
+                    // 確保每一行至少有名稱、價格、期限三個欄位
+                    if (columns.length >= 3) {
+                        const name = columns[0].trim();
+                        const price = columns[1].trim();
+                        const date = columns[2].trim();
+                        
+                        container.innerHTML += `
+                            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex justify-between items-center">
+                                <div>
+                                    <h2 class="font-bold text-gray-900">${name}</h2>
+                                    <p class="text-xs text-gray-500 mt-1">有效期限: ${date}</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-lg font-bold text-red-600">${price}元</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("讀取資料失敗:", error);
+                document.getElementById('product-list').innerHTML = 
+                    '<p class="text-center text-red-500">無法讀取商品資料，請稍後再試。</p>';
+            });
+    </script>
+</body>
+</html>
