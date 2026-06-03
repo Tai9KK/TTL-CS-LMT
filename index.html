@@ -37,13 +37,14 @@
         </a>
     </div>
 
-    <script>
+<script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQnV4EqBRopVryeZFVCCVelHDLrhthjiKbJ5EC88d0HjuZ5ub22wrbgPc6ELc0rrLUvkj3o5uqxNAC4/pub?output=csv'; 
 
         fetch(csvUrl)
             .then(res => res.text())
             .then(data => {
-                const lines = data.split('\n').filter(l => l.trim() !== '');
+                // 使用更嚴謹的切割方式，處理可能的尾端空行
+                const lines = data.split(/\r?\n/).filter(l => l.trim() !== '');
                 
                 // 1. 自動讀取日期 (讀取 A1 格)
                 document.getElementById('update-time').innerText = lines[0].trim();
@@ -51,10 +52,12 @@
                 const container = document.getElementById('product-list');
                 container.innerHTML = '';
 
-                // 2. 讀取商品 (從第 3 行開始，即索引 i=2，跳過日期行與標題行)
+                // 2. 讀取商品 (從第 3 行開始，索引 i=2)
                 for (let i = 2; i < lines.length; i++) {
                     const columns = lines[i].split(',').map(item => item.trim());
-                    if (columns.length < 4) continue; // 確保有足夠的欄位
+                    
+                    // 檢查：如果這一行不是 4 個欄位，直接跳過 (這能避免最後一行出現格式錯誤導致顯示錯位)
+                    if (columns.length < 4) continue; 
                     
                     const [name, originalPrice, salePrice, date] = columns;
                     
@@ -73,7 +76,7 @@
                 }
             })
             .catch(err => {
-                document.getElementById('product-list').innerHTML = '<p class="text-center text-red-500">無法讀取資料</p>';
+                document.getElementById('product-list').innerHTML = '<p class="text-center text-red-500">資料格式讀取異常，請檢查 Google Sheet</p>';
             });
     </script>
 </body>
