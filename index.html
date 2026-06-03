@@ -8,24 +8,36 @@
 </head>
 <body class="bg-gray-100 min-h-screen pb-10">
 
+    <!-- Header -->
     <div class="bg-blue-900 text-white p-6 text-center shadow-lg">
         <h1 class="text-xl font-bold">🛒 台酒便利店-花蓮店</h1>
         <p class="text-sm opacity-80 mt-1">即期惜福商品清單</p>
     </div>
 
+    <!-- 說明與警語區 -->
     <div class="max-w-md mx-auto mt-4 px-4">
-        <div class="bg-red-50 border-l-4 border-red-500 p-3 text-red-700 text-sm font-bold shadow-sm">
-            ⚠️ 數量有限，售完為止，實際以門市現場餘量為主
+        <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm text-sm text-gray-700 space-y-2">
+            <p>⚠️ 此網頁僅供布達 此批新增的即期惜福商品 使用，非即時庫存資訊</p>
+            <p>⚠️ 數量有限，售完為止，實際庫存以門市現場餘量為主</p>
+            <p class="font-bold text-blue-600">更新日期時間: <span id="update-time">2026/06/03</span></p>
         </div>
     </div>
 
+    <!-- 酒類警語 (法規標示) -->
+    <div class="max-w-md mx-auto mt-2 px-4 text-center">
+        <p class="text-[10px] text-gray-500 italic">⚠️ 飲酒過量，有礙健康。酒後不開車，安全有保障。未滿十八歲禁止飲酒。</p>
+    </div>
+
+    <!-- 商品列表 -->
     <div id="product-list" class="max-w-md mx-auto mt-4 px-4 space-y-4">
-        <p class="text-center text-gray-500">讀取中...</p>
+        <p class="text-center text-gray-500 py-10">資料讀取中...</p>
     </div>
 
     <script>
-        // 請確保 Google Sheet 的欄位順序：名稱, 原價, 惜福價, 有效期限
-        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQnV4EqBRopVryeZFVCCVelHDLrhthjiKbJ5EC88d0HjuZ5ub22wrbgPc6ELc0rrLUvkj3o5uqxNAC4/pub?output=csv'; 
+        // 設定更新日期 (若要更新日期，改這裡的文字即可)
+        document.getElementById('update-time').innerText = "2026/06/03 09:45";
+
+        const csvUrl = '您的CSV發布連結'; 
 
         fetch(csvUrl)
             .then(res => res.text())
@@ -38,14 +50,14 @@
                     const [name, originalPrice, salePrice, date] = lines[i].split(',').map(item => item.trim());
                     
                     container.innerHTML += `
-                        <div class="bg-white rounded-xl shadow-md p-4 border border-gray-100 flex justify-between items-center transition hover:shadow-lg">
+                        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex justify-between items-center">
                             <div>
                                 <h2 class="font-bold text-gray-800">${name}</h2>
-                                <p class="text-xs text-gray-400 mt-1">⏳ 到期: ${date}</p>
+                                <p class="text-xs text-gray-400 mt-1">⏳ 有效期限: ${date}</p>
                             </div>
                             <div class="text-right">
                                 <p class="text-xs text-gray-400 line-through">原價 $${originalPrice}</p>
-                                <p class="text-xl font-black text-red-600">$${salePrice}</p>
+                                <p class="text-xl font-black text-red-600">$${salePrice}元</p>
                             </div>
                         </div>
                     `;
