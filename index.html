@@ -6,48 +6,55 @@
     <title>【台酒便利店-花蓮店】即期惜福品</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen pb-10">
+<body class="bg-gray-100 min-h-screen pb-20">
 
-    <!-- Header -->
     <div class="bg-blue-900 text-white p-6 text-center shadow-lg">
         <h1 class="text-xl font-bold">🛒 台酒便利店-花蓮店</h1>
-        <p class="text-sm opacity-80 mt-1">即期惜福商品清單</p>
+        <p class="text-sm opacity-80 mt-1">即期惜福商品 新增品項</p>
     </div>
 
-    <!-- 說明與警語區 -->
     <div class="max-w-md mx-auto mt-4 px-4">
         <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm text-sm text-gray-700 space-y-2">
-            <p>⚠️ 此網頁僅供布達 此批新增的即期惜福商品 使用，非即時庫存資訊</p>
-            <p>⚠️ 數量有限，售完為止，實際庫存以門市現場餘量為主</p>
-            <p class="font-bold text-blue-600">更新日期時間: <span id="update-time">2026/06/03</span></p>
+            <p>⚠️ 此網頁僅供布達 此批新增的即期惜福商品 使用</p>
+            <p>⚠️ 非即時庫存資訊，數量有限，售完為止</p>
+            <p>⚠️ 實際庫存以門市現場餘量為主</p>
+            <p class="font-bold text-blue-600">更新日期時間: <span id="update-time">讀取中...</span></p>
         </div>
     </div>
 
-    <!-- 酒類警語 (法規標示) -->
     <div class="max-w-md mx-auto mt-2 px-4 text-center">
         <p class="text-[10px] text-gray-500 italic">⚠️ 飲酒過量，有礙健康。酒後不開車，安全有保障。未滿十八歲禁止飲酒。</p>
     </div>
 
-    <!-- 商品列表 -->
     <div id="product-list" class="max-w-md mx-auto mt-4 px-4 space-y-4">
         <p class="text-center text-gray-500 py-10">資料讀取中...</p>
     </div>
 
-    <script>
-        // 設定更新日期 (若要更新日期，改這裡的文字即可)
-        document.getElementById('update-time').innerText = "2026/06/03 09:45";
+    <div class="fixed bottom-0 left-0 w-full p-4 bg-white border-t border-gray-200 shadow-2xl z-50">
+        <a href="https://line.me/ti/g2/_jxT5l1rkZsZABIYSWUFhankLj3kauPqgieoVw?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" 
+           class="block w-full bg-green-500 text-white text-center py-3 rounded-lg font-bold shadow-md hover:bg-green-600 transition">
+            💬 點擊諮詢
+        </a>
+    </div>
 
+    <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQnV4EqBRopVryeZFVCCVelHDLrhthjiKbJ5EC88d0HjuZ5ub22wrbgPc6ELc0rrLUvkj3o5uqxNAC4/pub?output=csv'; 
 
         fetch(csvUrl)
             .then(res => res.text())
             .then(data => {
-                const container = document.getElementById('product-list');
-                container.innerHTML = '';
                 const lines = data.split('\n').filter(l => l.trim() !== '');
                 
+                // 1. 自動讀取日期 (讀取 A1 格)
+                document.getElementById('update-time').innerText = lines[0].split(',')[0];
+
+                const container = document.getElementById('product-list');
+                container.innerHTML = '';
+
+                // 2. 讀取商品 (從第 2 行 i=1 開始，因為第 1 行現在是日期)
                 for (let i = 1; i < lines.length; i++) {
                     const [name, originalPrice, salePrice, date] = lines[i].split(',').map(item => item.trim());
+                    if (!name) continue;
                     
                     container.innerHTML += `
                         <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 flex justify-between items-center">
