@@ -37,7 +37,7 @@
         // 設定更新日期 (若要更新日期，改這裡的文字即可)
         document.getElementById('update-time').innerText = "2026/06/03 09:45";
 
-        const csvUrl = '您的CSV發布連結'; 
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQnV4EqBRopVryeZFVCCVelHDLrhthjiKbJ5EC88d0HjuZ5ub22wrbgPc6ELc0rrLUvkj3o5uqxNAC4/pub?output=csv'; 
 
         fetch(csvUrl)
             .then(res => res.text())
